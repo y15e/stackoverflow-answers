@@ -26,30 +26,32 @@ Categories.sync().then(() => {
 });
 
 const SuppliersCategories = sequelize.define('SuppliersCategories', {
-  supplier_id: Sequelize.INTEGER,
-  category_id: Sequelize.INTEGER
+  SupplierId: Sequelize.INTEGER,
+  CategoryId: Sequelize.INTEGER
 }, {});
 
 SuppliersCategories.sync().then(() => {
   Suppliers.belongsToMany(Categories, {
-	through: SuppliersCategories
+	through: 'SuppliersCategories'
   })
 })
 
 SuppliersCategories.sync().then(() => {
   SuppliersCategories.create({
-	supplier_id: 1,
+	SupplierId: 1,
 	CategoryId: 1
   });
-})
 
-Suppliers.findAll({
-  include: [
-    {
-	  model: Categories,
-	  attributes :['categoryName']
-	}
-  ]
-}).then(res => {
-  console.dir(res);
-});
+  Suppliers.findAll({
+    include: [
+      {
+	    model: Categories,
+	    attributes :['categoryName'],
+        through: { attributes: [] } // Add this line
+	  }
+    ]
+  }).then(res => {
+    console.dir(res[0].dataValues, {depth:3});
+  });
+  
+})
